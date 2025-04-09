@@ -1,14 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 
 const ResultsViewer = ({ processedImages, prevStep }) => {
-  const handleDownloadImages = () => {
-    // En un entorno real, aquí implementaríamos la descarga de todas las imágenes
-    // como un archivo ZIP utilizando JSZip o similar
-    
-    // Simulamos la descarga con una alerta
-    alert('En un entorno de producción, aquí se descargaría un archivo ZIP con todas las imágenes procesadas.');
+  const [isDownloading, setIsDownloading] = useState(false);
+  
+  const handleDownloadImages = async () => {
+    try {
+      setIsDownloading(true);
+      
+      // Crear un nuevo archivo ZIP
+      const zip = new JSZip();
+      
+      // Añadir cada imagen al ZIP
+      const promises = processedImages.map(async (image) => {
+        // Verificar si tenemos el blob o necesitamos crearlo desde la vista previa
+        const imageBlob = image.resultBlob || 
+          await (await fetch(image.resultPreview)).blob();
+        
+        // Añadir la imagen al ZIP con su nuevo nombre
+        zip.file(image.newName, imageBlob);
+        
+        return true;
+      });
+      
+      // Esperar a que todas las imágenes se añadan
+      await Promise.all(promises);
+      
+      // Generar el archivo ZIP
+      const zipContent = await zip.generateAsync({ 
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: {
+          level: 6 // nivel de compresión (0-9)
+        }
+      });
+      
+      // Descargar el archivo ZIP
+      saveAs(zipContent, 'imagenes_procesadas.zip');
+      
+    } catch (error) {
+      console.error('Error al crear el archivo ZIP:', error);
+      alert('Ha ocurrido un error al generar el archivo ZIP.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleDownloadExcel = () => {
