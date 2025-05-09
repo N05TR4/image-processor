@@ -163,7 +163,7 @@ const ImageProcessor = ({
           <p className="text-sm text-yellow-600 mb-2">
             Estas imágenes no se procesarán porque no tienen coincidencia en los datos de empleados.
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-96 overflow-y-auto">
             {nonMatchingImages.map((image, index) => (
               <div key={index} className="relative">
                 <img 

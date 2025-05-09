@@ -118,7 +118,7 @@ const ImageUploader = ({ images, setImages, nextStep, prevStep }) => {
       {images.length > 0 && (
         <div className="mt-6">
           <h3 className="text-lg font-medium mb-2">Imágenes cargadas: {images.length}</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-96 overflow-y-auto">
             {images.map((image, index) => (
               <div key={index} className="relative group">
                 <img 
